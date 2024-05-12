@@ -2,6 +2,8 @@ import os
 from pathlib import Path
 from typing import List, Dict
 from openai import OpenAI
+from octoai.client import OctoAI
+from octoai.text_gen import ChatMessage
 
 OPENAI_API_KEY = os.getenv("OPEN_AI_API_KEY")
 
@@ -66,6 +68,19 @@ class AnswerGenerator:
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(exist_ok=True)  # Ensure output directory exists
     def generate_podcast_script(self, user_persona: Dict, user_query: str) -> str:
+        client = OctoAI(api_key=os.environ['OCTO_API_KEY'])
+        completion = client.text_gen.create_chat_completion(
+        model="meta-llama-3-70b-instruct",
+        messages=[
+            ChatMessage(
+                role="system",
+                content="You are going to generate a podcast script to be read out. Generate based on the user input and related documents.",
+            ),
+            ChatMessage(role="user", content=template.format(user_interest=user_interest, persona=olivia.get_user_persona(), ideas=vectorsearch.query(olivia.full_name + "'s interest lies within: " + ",".join(olivia.interests)+", generate some ideas that help her live a cool life that is tailored to her interests"))),
+        ],
+        max_tokens=5000,
+    )
+    script = completion.choices[0].message.content
 
     def convert_script_to_speech(self, script: str, output_filename: str) -> None:
         """Convert the podcast script to speech and save as an audio file."""
