@@ -29,6 +29,7 @@ import requests
 from bs4 import BeautifulSoup
 from octoai.client import OctoAI
 from octoai.text_gen import ChatMessage
+from llama_index.core import Document
 
 article_url = "https://www.oxen.ai/blog/arxiv-dives-diffusion-transformers"
 
@@ -53,9 +54,11 @@ def parse_blog_urls():
 
 	contents = []
 	for url in urls:
-		contents.append("\n" + fetch_article_text(url))
+		contents.append(Document(text=fetch_article_text(url)))
 
 	print(contents)
+
+	return contents
 
 # def main():
 # 	parse_blog_urls()

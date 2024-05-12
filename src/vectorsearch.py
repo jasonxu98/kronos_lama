@@ -4,6 +4,7 @@ import os
 from llama_index.core import SimpleDirectoryReader, VectorStoreIndex, StorageContext, Settings
 from llama_index.vector_stores.mongodb import MongoDBAtlasVectorSearch
 from llama_index.llms.ollama import Ollama
+from contents import parse_blog_urls
 
 def get_mongo_client(mongo_uri):
   """Establish connection to the MongoDB."""
@@ -71,7 +72,7 @@ def create_database(db_name, collection_name):
   collection.delete_many({})
 
   # Load documents
-  documents = SimpleDirectoryReader("../data").load_data()
+  documents = parse_blog_urls()
 
   Settings.embed_model = OpenAIEmbedding(
               model = "text-embedding-3-large",
@@ -92,4 +93,6 @@ def create_database(db_name, collection_name):
   return VectorStoreIndex.from_documents(
      documents, storage_context=vector_store_context, show_progress=True
   )
-create_database(db_name="DB", collection_name="collection")
+
+# create_database(db_name="DB", collection_name="collection")
+print(query("hello"))
