@@ -8,7 +8,7 @@ import streamlit as st
 from PIL import Image
 from src import vectorsearch
 from src import groq_inference
-from audiorecorder import audiorecorder
+# from audio_recorder_streamlit import audio_recorder
 
 OPENAI_API_KEY = os.getenv("OPEN_AI_API_KEY")
 

@@ -9,7 +9,7 @@ from PIL import Image
 import vectorsearch
 import groq_inference
 from speech_to_text import AnswerGenerator, AudioTranscriber
-from audiorecorder import audiorecorder
+from audio_recorder_streamlit import audiorecorder
 
 OPENAI_API_KEY = os.getenv("OPEN_AI_API_KEY")
 
