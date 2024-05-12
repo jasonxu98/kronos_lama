@@ -407,3 +407,6 @@ wsproto==1.2.0
     # via trio-websocket
 yarl==1.9.4
     # via aiohttp
+streamlit
+pandas
+numpy
