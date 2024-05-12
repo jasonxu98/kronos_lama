@@ -54,10 +54,10 @@ def parse_blog_urls():
 
 	contents = []
 	for url in urls:
-		contents.append(Document(text=fetch_article_text(url)))
-
+		# contents.append(Document(text=fetch_article_text(url)))
+		contents.append(url)
 	print(contents)
-
+	print("Length of contents: " + str(len(contents)))
 	return contents
 
 # def main():

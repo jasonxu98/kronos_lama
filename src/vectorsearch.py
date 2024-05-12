@@ -1,10 +1,12 @@
 import pymongo
 from llama_index.embeddings.openai import OpenAIEmbedding
 import os
-from llama_index.core import SimpleDirectoryReader, VectorStoreIndex, StorageContext, Settings
+from llama_index.readers.web import SimpleWebPageReader
+from llama_index.core import SimpleDirectoryReader, VectorStoreIndex, StorageContext, Settings, Document
 from llama_index.vector_stores.mongodb import MongoDBAtlasVectorSearch
 from llama_index.llms.ollama import Ollama
 from contents import parse_blog_urls
+from llama_index.llms.openai import OpenAI
 
 def get_mongo_client(mongo_uri):
   """Establish connection to the MongoDB."""
@@ -16,7 +18,7 @@ def get_mongo_client(mongo_uri):
     print(f"Connection failed: {e}")
     return None
 
-def query(text):
+def query(text, collection="collection"):
   mongo_uri = os.environ["MONGO_URI"]
 
   if not mongo_uri:
@@ -25,34 +27,21 @@ def query(text):
   mongo_client = get_mongo_client(mongo_uri)
 
   DB_NAME = "DB"
-  COLLECTION_NAME = "collection"
+  COLLECTION_NAME = collection
 
   db = mongo_client[DB_NAME]
   collection = db[COLLECTION_NAME]
-
-  embed_model = OpenAIEmbedding(
-              model = "text-embedding-3-large",
-              embed_batch_size=100
-          )
-
-  Settings.embed_model = embed_model
-
-  
-  Settings.llm = Ollama(model="llama3:70b")
 
   atlas_vector_search = MongoDBAtlasVectorSearch(
       mongo_client,
       db_name = DB_NAME,
       collection_name = COLLECTION_NAME,
       index_name = "vector_index",
-      embedding_key="embedding"
   )
-#   vector_store_context = StorageContext.from_defaults(vector_store=atlas_vector_search)
 
-  # vector_store_index = VectorStoreIndex.from_documents(
-  #    documents, storage_context=vector_store_context, show_progress=True
-  # )
+  print(DB_NAME, COLLECTION_NAME)
 
+  # Retrieve vector store index for query.
   vector_store_index = VectorStoreIndex.from_vector_store(vector_store=atlas_vector_search)
 
   response = vector_store_index.as_query_engine().query(text)
@@ -71,11 +60,8 @@ def create_database(db_name, collection_name):
   # Ensure we have fresh new collection when we recreate the database.
   collection.delete_many({})
 
-  # Load documents
-  documents = parse_blog_urls()
-
   Settings.embed_model = OpenAIEmbedding(
-              model = "text-embedding-3-large",
+              model = "text-embedding-3-small",
               embed_batch_size=100
           )
 
@@ -86,13 +72,18 @@ def create_database(db_name, collection_name):
       db_name = db_name,
       collection_name = collection_name,
       index_name = "vector_index",
-      embedding_key="embedding"
   )
 
+#   documents = SimpleDirectoryReader("../data/pottery").load_data()
+  documents = SimpleDirectoryReader("../data/pottery").load_data()
+  print(len(documents))
   vector_store_context = StorageContext.from_defaults(vector_store=atlas_vector_search)
-  return VectorStoreIndex.from_documents(
-     documents, storage_context=vector_store_context, show_progress=True
+  VectorStoreIndex.from_documents(
+    documents, storage_context=vector_store_context, show_progress=True
   )
 
+# create_database(db_name="DB", collection_name="pottery")
 # create_database(db_name="DB", collection_name="collection")
-print(query("hello"))
+# print(query("find articles related to embedding"))
+# print(query("What is glazing pottery?", collection="pottery"))
+# print(query("Olivia wants to learn how to do pottery. What would you recommend her to do? And why? ", collection="pottery"))

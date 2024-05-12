@@ -68,7 +68,7 @@ class AudioTranscriber:
         return transcription
 
 class AnswerGenerator:
-    def __init__(self, api_key: str, output_dir: str = "data"):
+    def __init__(self, api_key: str, output_dir: str = "output"):
         self.client = OpenAI(api_key=api_key)
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(exist_ok=True)  # Ensure output directory exists
