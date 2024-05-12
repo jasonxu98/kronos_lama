@@ -80,7 +80,8 @@ class AnswerGenerator:
         ],
         max_tokens=5000,
     )
-    script = completion.choices[0].message.content
+        script = client.completion.choices[0].message.content
+        return script
 
     def convert_script_to_speech(self, script: str, output_filename: str) -> None:
         """Convert the podcast script to speech and save as an audio file."""

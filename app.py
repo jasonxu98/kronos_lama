@@ -6,8 +6,8 @@ from octoai.client import OctoAI
 from octoai.text_gen import ChatMessage
 import streamlit as st
 from PIL import Image
-import vectorsearch
-import groq_inference
+from src import vectorsearch
+from src import groq_inference
 from audiorecorder import audiorecorder
 
 OPENAI_API_KEY = os.getenv("OPEN_AI_API_KEY")
@@ -54,11 +54,40 @@ class User:
             "example_podcasts": self.example_podcasts
         }
 
-#class AudioTranscriber:
-    # ... (keep the existing AudioTranscriber class code)
+class AudioTranscriber:
+    def __init__(self):
+        self.client = OpenAI(api_key=OPENAI_API_KEY)
+    def transcribe_user_query(self, audio_file_path: str) -> str:
+        """Transcribe the provided user query audio file to text."""
+        with open(audio_file_path, "rb") as audio_file:
+            transcription = self.client.audio.transcriptions.create(
+                model="whisper-1",
+                file=audio_file,
+                response_format="text"
+            )
+        return transcription
 
-#class AnswerGenerator:
-    # ... (keep the existing AnswerGenerator class code)
+class AnswerGenerator:
+    def __init__(self, api_key: str, output_dir: str = "output"):
+        self.client = OpenAI(api_key=api_key)
+        self.output_dir = Path(output_dir)
+        self.output_dir.mkdir(exist_ok=True)  # Ensure output directory exists
+    def generate_podcast_script(self, user_persona: Dict, user_query: str) -> str:
+        client = OctoAI(api_key=os.environ['OCTO_API_KEY'])
+        completion = client.text_gen.create_chat_completion(
+        model="meta-llama-3-70b-instruct",
+        messages=[
+            ChatMessage(
+                role="system",
+                content="You are going to generate a podcast script to be read out. Generate based on the user input and related documents.",
+            ),
+            ChatMessage(role="user", content=template.format(user_interest=user_interest, persona=olivia.get_user_persona(), ideas=vectorsearch.query(olivia.full_name + "'s interest lies within: " + ",".join(olivia.interests)+", generate some ideas that help her live a cool life that is tailored to her interests"))),
+        ],
+        max_tokens=2500,
+        temperature=0.08,
+    )
+        script = client.completion.choices[0].message.content
+        return script
 
 class TextToSpeechConverter:
     def __init__(self, api_key, output_dir="data"):
