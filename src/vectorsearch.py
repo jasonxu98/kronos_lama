@@ -3,7 +3,7 @@ from llama_index.embeddings.openai import OpenAIEmbedding
 import os
 from llama_index.core import SimpleDirectoryReader, VectorStoreIndex, StorageContext, Settings
 from llama_index.vector_stores.mongodb import MongoDBAtlasVectorSearch
-from llama_index.llms.openai import OpenAI
+from llama_index.llms.ollama import Ollama
 
 def get_mongo_client(mongo_uri):
   """Establish connection to the MongoDB."""
@@ -23,8 +23,8 @@ def query(text):
 
   mongo_client = get_mongo_client(mongo_uri)
 
-  DB_NAME = "pdf"
-  COLLECTION_NAME = "bills"
+  DB_NAME = "DB"
+  COLLECTION_NAME = "collection"
 
   db = mongo_client[DB_NAME]
   collection = db[COLLECTION_NAME]
@@ -36,12 +36,8 @@ def query(text):
 
   Settings.embed_model = embed_model
 
-  llm = OpenAI(
-    model_name="accounts/fireworks/models/mixtral-8x7b-instruct",
-    base_url="https://api.fireworks.ai/inference/v1/completions",
-    max_tokens=256)
   
-  Settings.llm = llm
+  Settings.llm = Ollama(model="llama3:70b")
 
   atlas_vector_search = MongoDBAtlasVectorSearch(
       mongo_client,
@@ -82,10 +78,7 @@ def create_database(db_name, collection_name):
               embed_batch_size=100
           )
 
-  Settings.llm = OpenAI(
-    model_name="accounts/fireworks/models/mixtral-8x7b-instruct",
-    base_url="https://api.fireworks.ai/inference/v1/completions",
-    max_tokens=256)
+  Settings.llm = Ollama(model="llama3:70b")
 
   atlas_vector_search = MongoDBAtlasVectorSearch(
       mongo_client,
