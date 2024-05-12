@@ -7,6 +7,10 @@
 #   all-features: false
 #   with-sources: false
 
+streamlit
+pandas
+numpy
+
 -e file:.
 aiohttp==3.9.5
     # via llama-index-core
@@ -407,6 +411,3 @@ wsproto==1.2.0
     # via trio-websocket
 yarl==1.9.4
     # via aiohttp
-streamlit
-pandas
-numpy
