@@ -219,7 +219,7 @@ def main():
                 st.write(suggestion["description"])
                 st.session_state['selected_podcast'] = suggestion
                 st.header("Now Playing: " + st.session_state['selected_podcast']["title"])
-                st.audio(st.session_state['selected_podcast']["audio_path"], format="audio/mp3")
+                st.audio('output/podcast.mp3', format="audio/mp3")
 
             # if 'selected_podcast' in st.session_state:
                 selected_podcast = st.session_state['selected_podcast']
