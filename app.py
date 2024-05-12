@@ -88,6 +88,17 @@ class AnswerGenerator:
     )
         script = client.completion.choices[0].message.content
         return script
+    
+    def convert_script_to_speech(self, script: str, output_filename: str) -> None:
+        """Convert the podcast script to speech and save as an audio file."""
+        output_file_path = self.output_dir / f"{output_filename}.mp3"
+        response = self.client.audio.speech.create(
+            model="tts-1",
+            voice="onyx",
+            input=script
+        )
+        response.stream_to_file(output_file_path)
+
 
 class TextToSpeechConverter:
     def __init__(self, api_key, output_dir="data"):
@@ -140,7 +151,7 @@ def generate_podcast_suggestions(user):
         {
             "title": f"Personalized Podcast for {user.full_name}",
             "description": script,
-            "image_path": "placeholder_image.jpg",
+            "image_path": "kronos.png",
             "audio_path": str(output_file_path),
             "transcript": script
         }
@@ -194,7 +205,7 @@ def main():
         example_podcasts=[],
     )
 
-    if st.button("Generate Podcast Suggestions"):
+    if st.button("Generate Podcast Suggestions") or ('selected_podcast' in st.session_state):
         st.header("Podcast Suggestions")
         podcast_suggestions = generate_podcast_suggestions(user)
         
@@ -207,30 +218,31 @@ def main():
                 st.subheader(suggestion["title"])
                 st.write(suggestion["description"])
                 if st.button("Play", key=suggestion["title"]):
-                    selected_podcast = suggestion
+                    st.session_state['selected_podcast'] = suggestion
                     break
 
-    if selected_podcast:
-        st.header("Now Playing: " + selected_podcast["title"])
-        st.audio(selected_podcast["audio_path"], format="audio/mp3")
+        if 'selected_podcast' in st.session_state:
+            selected_podcast = st.session_state['selected_podcast']
+            st.header("Now Playing: " + selected_podcast["title"])
+            st.audio(selected_podcast["audio_path"], format="audio/mp3")
 
-        st.sidebar.header("Transcript")
-        st.sidebar.write(selected_podcast["transcript"])
-        
-        st.sidebar.header("User Preferences")
-        st.sidebar.write("Full Name:", user.full_name)
-        st.sidebar.write("Organization:", user.organization)
-        st.sidebar.write("Role:", user.role)
-        st.sidebar.write("Interests:", ", ".join(user.interests))
-        st.sidebar.write("Age:", user.age)
-        st.sidebar.write("Sex:", user.sex)
-        st.sidebar.write("Preferred Listening Time:", user.lifestyle["listening_time"], "minutes")
-        st.sidebar.write("Preferred Voice Gender:", user.lifestyle["preferred_voice_gender"])
-        st.sidebar.write("Personal Message:", user.personal_message)
+            st.sidebar.header("Transcript")
+            st.sidebar.write(selected_podcast["transcript"])
+            
+            st.sidebar.header("User Preferences")
+            st.sidebar.write("Full Name:", user.full_name)
+            st.sidebar.write("Organization:", user.organization)
+            st.sidebar.write("Role:", user.role)
+            st.sidebar.write("Interests:", ", ".join(user.interests))
+            st.sidebar.write("Age:", user.age)
+            st.sidebar.write("Sex:", user.sex)
+            st.sidebar.write("Preferred Listening Time:", user.lifestyle["listening_time"], "minutes")
+            st.sidebar.write("Preferred Voice Gender:", user.lifestyle["preferred_voice_gender"])
+            st.sidebar.write("Personal Message:", user.personal_message)
 
-        user_question = st.text_input("Ask a question about the podcast")
-        if st.button("Ask"):
-            user_pause(user_question, user.get_user_persona())
+            user_question = st.text_input("Ask a question about the podcast")
+            if st.button("Ask"):
+                user_pause(user_question, user.get_user_persona())
 
 if __name__ == "__main__":
     main()

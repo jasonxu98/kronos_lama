@@ -5,7 +5,6 @@ from llama_index.readers.web import SimpleWebPageReader
 from llama_index.core import SimpleDirectoryReader, VectorStoreIndex, StorageContext, Settings, Document
 from llama_index.vector_stores.mongodb import MongoDBAtlasVectorSearch
 from llama_index.llms.ollama import Ollama
-from contents import parse_blog_urls
 from llama_index.llms.openai import OpenAI
 
 def get_mongo_client(mongo_uri):
