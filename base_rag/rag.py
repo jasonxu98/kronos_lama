@@ -37,7 +37,7 @@ def main():
             ),
             ChatMessage(role="user", content=template.format(user_interest=user_interest, articles=article_text)),
         ],
-        max_tokens=500,
+        max_tokens=5000,
     )
 
     print(json.dumps(completion.dict(), indent=2))

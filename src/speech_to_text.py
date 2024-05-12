@@ -3,8 +3,7 @@ from pathlib import Path
 from typing import List, Dict
 from openai import OpenAI
 
-# OPENAI_API_KEY = os.getenv("OPEN_AI_API_KEY")
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+OPENAI_API_KEY = os.getenv("OPEN_AI_API_KEY")
 
 class User:
     def __init__(self, full_name: str, organization: str, role: str, interests: List[str],
@@ -25,19 +24,14 @@ class User:
         self.preferred_genres = preferred_genres
         self.preferred_topics = preferred_topics
         self.example_podcasts = example_podcasts
-
     def update_interests(self, new_interests: List[str]):
         self.interests = new_interests
-
     def update_preferred_genres(self, new_genres: List[str]):
         self.preferred_genres = new_genres
-
     def update_preferred_topics(self, new_topics: List[str]):
         self.preferred_topics = new_topics
-
     def update_example_podcasts(self, new_example_podcasts: List[str]):
         self.example_podcasts = new_example_podcasts
-
     def get_user_persona(self) -> Dict:
         return {
             "full_name": self.full_name,
@@ -56,7 +50,6 @@ class User:
 class AudioTranscriber:
     def __init__(self):
         self.client = OpenAI(api_key=OPENAI_API_KEY)
-
     def transcribe_user_query(self, audio_file_path: str) -> str:
         """Transcribe the provided user query audio file to text."""
         with open(audio_file_path, "rb") as audio_file:
@@ -72,21 +65,7 @@ class AnswerGenerator:
         self.client = OpenAI(api_key=api_key)
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(exist_ok=True)  # Ensure output directory exists
-
-    def generate_podcast_script(self, user_persona: Dict, transcript: str) -> str:
-        """Generate a podcast script based on user persona and transcript."""
-        prompt = f"Generate a podcast script based on the following user persona:\n{user_persona}\n\n"
-        prompt += f"Transcript:\n{transcript}\n\nPodcast Script:"
-        response = self.client.completions.create(
-            engine="davinci",
-            prompt=prompt,
-            max_tokens=1024,
-            n=1,
-            stop=None,
-            temperature=0.7,
-        )
-        script = response.choices[0].text.strip()
-        return script
+    def generate_podcast_script(self, user_persona: Dict, user_query: str) -> str:
 
     def convert_script_to_speech(self, script: str, output_filename: str) -> None:
         """Convert the podcast script to speech and save as an audio file."""
