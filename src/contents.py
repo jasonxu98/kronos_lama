@@ -23,3 +23,42 @@ Feedback Loop: Implement a feedback mechanism. If the model produces an output t
 Conclusion
 GPT models, with their incredible generative capabilities, have revolutionized the AI landscape. However, like any tool, they require fine-tuning for optimal performance. Adjusting the temperature is a key method to minimize hallucinations and ensure that the outputs are both accurate and meaningful. With careful calibration and continuous evaluation, you can harness the full power of GPT models while minimizing their quirks.
 '''
+
+import json
+import requests
+from bs4 import BeautifulSoup
+from octoai.client import OctoAI
+from octoai.text_gen import ChatMessage
+
+article_url = "https://www.oxen.ai/blog/arxiv-dives-diffusion-transformers"
+
+def fetch_article_text(url):
+	response = requests.get(url)
+	soup = BeautifulSoup(response.text, 'html.parser')
+	article_text = ' '.join([p.get_text() for p in soup.find_all('p')])
+	return article_text
+
+def parse_blog_urls():
+	url = 'https://www.oxen.ai/blog/'
+	prefix = 'https://www.oxen.ai/'
+	reqs = requests.get(url)
+	soup = BeautifulSoup(reqs.text, 'html.parser')
+
+	urls = []
+	for link in soup.find_all('a'):
+		url = prefix + str(link.get('href'))
+		if "/blog/" in url:
+			urls.append(url) 
+			print(url)
+
+	contents = []
+	for url in urls:
+		contents.append("\n" + fetch_article_text(url))
+
+	print(contents)
+
+# def main():
+# 	parse_blog_urls()
+
+# if __name__ == "__main__":
+# 	main()
