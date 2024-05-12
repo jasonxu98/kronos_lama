@@ -1,9 +1,13 @@
 import os
+import weave
+import speech_to_text
 
 from groq import Groq
 
 PAUSED_SENTENCES = "WHERE USER HAS HIT PAUSE" #can we even implement it 
 
+weave.init("llama3-hackathon")
+@weave.op()
 def generate_response(LLM_GENERATED_TRANSCRIPT:str,USER_QUESTION:str,PAUSED_SENTENCES:str,USER_PERSONA:str)->str:
     SYSTEM = USER_QUESTION+USER_PERSONA
 
@@ -49,6 +53,8 @@ Remember, learning machine learning is a journey that requires patience, dedicat
         model="llama3-8b-8192", #live generation
         temperature=0.9
     )
+    ans_generator = speech_to_text.AnswerGenerator(api_key=os.environ['OPENAI_API_KEY'])
+    ans_generator.convert_script_to_speech(script=LLM_GENERATED_TRANSCRIPT, output_filename="test.mp4")
+    return chat_completion.choices[0].message.content
 
-    print(chat_completion.choices[0].message.content)
 print(generate_response("", "", "", ""))
