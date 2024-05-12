@@ -16,8 +16,14 @@ Here are the user input describing the type of podcast the user likes to hear: {
 The related articles found are: {articles}
 
 - Respond back only as JSON!
+- Don't break down to topic and summary in separate JSON output
+- The response should be in one paragraph like a podcast host talking.
 - Respond with the content of the podcast only. Do not include "host".
+- Be concise but witty, straight to the point.
+- Say how many topics you'll share up front. Tell explicltly when you switch to the next topic
+- Highlight the industry impact of each update first, if any
 - Modify the podcast tone based on the user's interest and the related articles.
+- Finish all topics generated within the given token limit
 '''
 
 def main():
@@ -25,7 +31,7 @@ def main():
     article_url = "https://www.oxen.ai/blog/arxiv-dives-diffusion-transformers"
     article_text = fetch_article_text(article_url)
 
-    client = OctoAI(api_key="YOUR_API_KEY")
+    client = OctoAI(api_key="KEYHERE")
     completion = client.text_gen.create_chat_completion(
         model="meta-llama-3-70b-instruct",
         messages=[
@@ -35,7 +41,7 @@ def main():
             ),
             ChatMessage(role="user", content=template.format(user_interest=user_interest, articles=article_text)),
         ],
-        max_tokens=500,
+        max_tokens=5000,
     )
 
     print(json.dumps(completion.dict(), indent=2))

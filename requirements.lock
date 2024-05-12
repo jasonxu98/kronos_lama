@@ -12,6 +12,8 @@ annotated-types==0.6.0
     # via pydantic
 anyio==4.3.0
     # via httpx
+beautifulsoup4==4.12.3
+    # via bs4
 boto3==1.34.103
     # via octoai
 boto3-stubs==1.34.103
@@ -21,9 +23,14 @@ botocore==1.34.103
     # via s3transfer
 botocore-stubs==1.34.94
     # via boto3-stubs
+bs4==0.0.2
+    # via kronos-lama
 certifi==2024.2.2
     # via httpcore
     # via httpx
+    # via requests
+charset-normalizer==3.3.2
+    # via requests
 h11==0.14.0
     # via httpcore
 httpcore==1.0.5
@@ -35,6 +42,7 @@ httpx-sse==0.4.0
 idna==3.7
     # via anyio
     # via httpx
+    # via requests
 jmespath==1.0.1
     # via boto3
     # via botocore
@@ -46,6 +54,8 @@ pydantic-core==2.18.2
     # via pydantic
 python-dateutil==2.9.0.post0
     # via botocore
+requests==2.31.0
+    # via kronos-lama
 s3transfer==0.10.1
     # via boto3
 six==1.16.0
@@ -53,6 +63,8 @@ six==1.16.0
 sniffio==1.3.1
     # via anyio
     # via httpx
+soupsieve==2.5
+    # via beautifulsoup4
 types-awscrt==0.20.9
     # via botocore-stubs
 types-boto3==1.0.2
@@ -65,3 +77,4 @@ typing-extensions==4.11.0
     # via pydantic-core
 urllib3==2.2.1
     # via botocore
+    # via requests

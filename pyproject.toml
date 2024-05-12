@@ -7,6 +7,8 @@ authors = [
 ]
 dependencies = [
     "octoai>=1.0.2",
+    "requests>=2.31.0",
+    "bs4>=0.0.2",
 ]
 readme = "README.md"
 requires-python = ">= 3.8"
