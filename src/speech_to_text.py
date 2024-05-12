@@ -3,7 +3,8 @@ from pathlib import Path
 from typing import List, Dict
 from openai import OpenAI
 
-OPENAI_API_KEY = os.getenv("OPEN_AI_API_KEY")
+# OPENAI_API_KEY = os.getenv("OPEN_AI_API_KEY")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 class User:
     def __init__(self, full_name: str, organization: str, role: str, interests: List[str],
